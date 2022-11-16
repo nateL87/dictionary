@@ -4,23 +4,168 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Han translate</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css" integrity="sha512-NmLkDIU1C/C88wi324HBc+S2kLhi08PN5GDeUVVVC/BVt/9Izdsc9SVeVfA1UZbY3sHUlDSyRXhCzHfr6hmPPw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+    <style>
+        html, body, textarea, button {
+            font-family: 'Noto Sans KR', sans-serif !important;
+        }
+        header {
+            background-color: #000000;
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 50px;
+            display: flex;
+            width: 100%;
+        }
+        header div {
+            font-size: 26px;
+            font-weight: bold;
+            margin: auto;
+            color: #ffffff;
+        }
+        section {
+            padding: 50px 10px 0px;
+        }
+        .textarea_container {
+            margin-top: 30px;
+        }
+        .textarea_container textarea {
+            width: 100%;
+            border: 1px solid #e3e3e3;
+            outline: 0;
+            resize: none;
+            font-size: 16px;
+            padding: 10px;
+            box-sizing: border-box;
+            border-radius: 5px;
+            line-height: 20px;;
+        }
+        .button_container {
+            margin-top: 15px;
+            display: flex;
+            width: 100%;
+        }
+        .button_container .korean_btn {
+            margin-right: 20px;
+        }
+        .button_container div {
+            width: 50%;
+        }
+        .button_container button {
+            font-size: 24px;
+            padding: 10px 0px;
+        }
+        .korean_btn button {
+            width: 100%;
+            background-color: #000000;
+            color: #ffffff;
+            border: 1px solid #000000;
+            border-radius: 5px;
+        }
+        .english_btn button {
+            width: 100%;
+            background-color: #ffffff;
+            color: #000000;
+            border: 1px solid #000000;
+            border-radius: 5px;
+        }
+        .content {
+            margin-top: 20px;
+        }
+        .title {
+            font-size: 30px;
+            font-weight: bold;
+        }
+        .result {
+            margin-top: 10px;
+            width: 100%;
+            border: 1px solid #e3e3e3;
+            outline: 0;
+            font-size: 16px;
+            padding: 10px;
+            box-sizing: border-box;
+            border-radius: 5px;
+            line-height: 25px;
+        }
+    </style>
 </head>
 <body>
-    <div>
-        <input type="text">
-        <button>검색</button>
-    </div>
-    <div>
-        <ul>
-            <li>
-                <div>book</div>
-                <div>a book..</div>
-                <div>he was booking</div>
-            </li>
-        </ul>
-    </div>
+    <header>
+        <div>
+            Han translate
+        </div>
+    </header>
+    <section>
+        <div class="textarea_container">
+            <textarea id="translateTextarea" cols="30" rows="10" placeholder="번역할 내용을 입력해주세요"></textarea>
+        </div>
+        <div class="button_container">
+            <div class="korean_btn">
+                <button type="button" id="kBtn">한->영 번역</button>
+            </div>
+            <div class="english_btn">
+                <button type="button" id="eBtn">영->한 번역</button>
+            </div>
+        </div>
+        <div class="content">
+            <div class="title">번역결과</div>
+            <div class="result" id="result">
+                번역 결과가 여기 나옵니다
+            </div>
+        </div>
+    </section>
+    <script>
+        $(function() {
+            $('#kBtn').click(function () {
+                var value = $('#translateTextarea').val();
+                $.ajax({
+                    type: "POST",
+                    url: 'http://43.200.126.158:3000/papago',
+                    data: {
+                        source: 'ko',
+                        target: 'en',
+                        text: value
+                    },
+                    success: function (res) {
+                        if (res.status === 200) {
+                            var data = res.data;
+                            $('#result').text(data.translatedText);
+                        }
+                    },
+                    error: function (err) {
+                        console.error(err);
+                    }
+                });
+            })
 
+            $('#eBtn').click(function () {
+                var value = $('#translateTextarea').val();
+                $.ajax({
+                    type: "POST",
+                    url: 'http://43.200.126.158:3000/papago',
+                    data: {
+                        source: 'en',
+                        target: 'ko',
+                        text: value
+                    },
+                    success: function (res) {
+                        if (res.status === 200) {
+                            var data = res.data;
+                            $('#result').text(data.translatedText);
+                        }
+                    },
+                    error: function (err) {
+                        console.error(err);
+                    }
+                });
+            })
+        });
+    </script>
 </body>
 </html>
